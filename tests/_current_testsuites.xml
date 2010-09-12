@@ -1,0 +1,7 @@
+<phpunit>
+	<testsuites>
+		<testsuite name="WPAlchemy Current TestCase">
+			<file>DisplayOption_Lock_TestCase.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>

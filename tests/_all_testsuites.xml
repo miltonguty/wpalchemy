@@ -1,0 +1,9 @@
+<phpunit>
+	<testsuites>
+		<testsuite name="WPAlchemy Display Options">
+			<file>DisplayOption_HideEditor_TestCase.php</file>
+			<file>DisplayOption_HideTitle_TestCase.php</file>
+			<file>DisplayOption_Lock_TestCase.php</file>
+		</testsuite>
+	</testsuites>
+</phpunit>
