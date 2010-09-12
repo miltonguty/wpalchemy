@@ -23,7 +23,7 @@ class WPAlchemy_Base_TestCase extends PHPUnit_Extensions_SeleniumTestCase
 		),*/
 	);
 	
-	public $_url = 'http://playground.dev/';
+	public $_url = 'http://wpalchemy.dev/testing/';
 
 	public $_setup_file = NULL;
 
@@ -94,7 +94,7 @@ class WPAlchemy_Base_TestCase extends PHPUnit_Extensions_SeleniumTestCase
 
 	function _login($u, $p)
 	{
-		$this->open("/wordpress/wp-login.php?loggedout=true");
+		$this->open($this->_url . "wp-login.php?loggedout=true");
 		$this->type("user_login", $u);
 		$this->type("user_pass", $p);
 		$this->click("wp-submit");
