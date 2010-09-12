@@ -24,3 +24,14 @@ http://www.phpunit.de/manual/3.5/en/installation.html
 3) You will need to place the following in your functions.php file:
 
    include_once TEMPLATEPATH . '/tests/fixtures/functions.php';
+
+4) You need to create two users on the installation of WordPress that will be
+   used for testing:
+
+   user: tester-one
+   pass: Abcd1234!
+
+   user: tester-two
+   pass: Abcd1234!
+   note: this user should have the visual editor disabled: 
+         Users > Edit > check "Disable the visual editor when writing"
