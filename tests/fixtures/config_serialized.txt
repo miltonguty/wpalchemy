@@ -1,1 +1,1 @@
-a:4:{s:2:"id";s:22:"_custom_meta_lock_test";s:5:"title";s:14:"My Custom Meta";s:8:"template";s:119:"C:/bin/apache/projects/farinspace/playground/trunk/wordpress/wp-content/themes/twentyten/tests/fixtures/simple_meta.php";s:4:"lock";s:16:"after_post_title";}
+a:4:{s:2:"id";s:22:"_custom_meta_view_test";s:5:"title";s:14:"My Custom Meta";s:8:"template";s:117:"C:/bin/apache/projects/dimas/wpalchemy/html/testing/wp-content/themes/twentyten_custom/tests/fixtures/simple_meta.php";s:4:"view";s:6:"closed";}
