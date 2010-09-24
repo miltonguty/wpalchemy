@@ -1,7 +1,12 @@
 <phpunit>
+	<selenium>
+		<browser 
+			name="FF on Windows 7" 
+			browser="*firefox"/>
+	</selenium>
 	<testsuites>
 		<testsuite name="WPAlchemy Current TestCase">
-			<file>DisplayOption_View_TestCase.php</file>
+			<file>Functional_TestCase.php</file>
 		</testsuite>
 	</testsuites>
 </phpunit>

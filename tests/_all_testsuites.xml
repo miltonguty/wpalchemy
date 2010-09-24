@@ -1,6 +1,20 @@
 <phpunit>
+	<selenium>
+		<browser 
+			name="FF on Windows 7" 
+			browser="*firefox"/>
+		<browser 
+			name="Chrome on Windows 7" 
+			browser="*googlechrome"/>
+		<browser 
+			name="IE on Windows 7" 
+			browser="*iexploreproxy"/>
+	</selenium>
 	<testsuites>
-		<testsuite name="WPAlchemy Display Options">
+		<testsuite name="WPAlchemy Functional Tests">
+			<file>Functional_TestCase.php</file>
+		</testsuite>
+		<testsuite name="WPAlchemy Display Options Tests">
 			<file>DisplayOption_HideEditor_TestCase.php</file>
 			<file>DisplayOption_HideTitle_TestCase.php</file>
 			<file>DisplayOption_Lock_TestCase.php</file>

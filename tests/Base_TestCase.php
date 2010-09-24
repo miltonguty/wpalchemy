@@ -4,25 +4,6 @@ require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
 class WPAlchemy_Base_TestCase extends PHPUnit_Extensions_SeleniumTestCase
 {
-	public static $browsers = array
-	(
-		array
-		(
-			'name'    => 'FF on Windows 7',
-			'browser' => '*firefox',
-		),/*
-		array
-		(
-			'name'    => 'Chrome on Windows 7',
-			'browser' => '*googlechrome',
-		),
-		array
-		(
-			'name'    => 'IE on Windows 7',
-			'browser' => '*iexploreproxy',
-		),*/
-	);
-	
 	public $_url = 'http://wpalchemy.dev/testing/';
 
 	public $_setup_file = NULL;
@@ -106,20 +87,52 @@ class WPAlchemy_Base_TestCase extends PHPUnit_Extensions_SeleniumTestCase
 	function _use_post_type()
 	{
 		$this->click("//li[@id='menu-posts']/div[1]/a");
+
 		$this->waitForPageToLoad("30000");
+
 		$this->click("link=Hello world!");
+
 		$this->waitForPageToLoad("30000");
 
 		$this->assertElementPresent("//input[@type='text'][@id='title'][@value='Hello world!']");
 	}
 
+	function _use_post_type_new()
+	{
+		$this->click("//li[@id='menu-posts']/div[1]/a");
+
+		$this->waitForPageToLoad("30000");
+
+		$this->click("css=#wpbody-content .wrap h2 a.button");
+
+		$this->waitForPageToLoad("30000");
+
+		 $this->assertEquals("Add New Post", $this->getText("css=#wpbody-content .wrap h2"));
+	}
+
 	function _use_page_type()
 	{
 		$this->click("//li[@id='menu-pages']/div[1]/a");
+
 		$this->waitForPageToLoad("30000");
+
 		$this->click("link=About");
+
 		$this->waitForPageToLoad("30000");
 
 		$this->assertElementPresent("//input[@type='text'][@id='title'][@value='About']");
+	}
+
+	function _use_page_type_new()
+	{
+		$this->click("//li[@id='menu-pages']/div[1]/a");
+
+		$this->waitForPageToLoad("30000");
+
+		$this->click("css=#wpbody-content .wrap h2 a.button");
+
+		$this->waitForPageToLoad("30000");
+
+		$this->assertEquals("Add New Page", $this->getText("css=#wpbody-content .wrap h2"));
 	}
 }
