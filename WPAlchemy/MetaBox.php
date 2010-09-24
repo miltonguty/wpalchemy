@@ -5,10 +5,13 @@
  * @copyright	Copyright (c) 2009, Dimas Begunoff, http://farinspace.com
  * @license		http://en.wikipedia.org/wiki/MIT_License The MIT License
  * @package		WPAlchemy
- * @version		1.3.3
+ * @version		1.3.6
  * @link		http://github.com/farinspace/wpalchemy
  * @link		http://farinspace.com
  */
+
+// todo: perhaps move _global_head and _global_foot locally, when first run
+// define a constant to prevent other instances from running again ...
 
 add_action('admin_head', array('WPAlchemy_MetaBox', '_global_head'));
 
@@ -46,6 +49,15 @@ define('WPALCHEMY_VIEW_ALWAYS_OPENED', 'always_opened');
 
 class WPAlchemy_MetaBox
 {
+	/**
+	 * User defined identifier for the meta box, prefix with an underscore to
+	 * prevent option(s) form showing up in the custom fields meta box, this
+	 * option should be used when instantiating the class.
+	 *
+	 * @since	1.0
+	 * @access	public
+	 * @var		string required
+	 */
 	var $id;
 
 	/**
@@ -54,14 +66,26 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.0
 	 * @access	public
-	 * @var		string
+	 * @var		string required
+	 * @see		$hide_title
 	 */
 	var $title = 'Custom Meta';
+
+	/**
+	 * Used to set the meta box content, the contents of your meta box should be
+	 * defined within this file, this option should be used when instantiating
+	 * the class.
+	 *
+	 * @since	1.0
+	 * @access	public
+	 * @var		string required
+	 */
+	var $template;
 
 	var $types;
 	var $context = 'normal';
 	var $priority = 'high';
-	var $template;
+	
 	var $autosave = TRUE;
 
 	var $mode = WPALCHEMY_MODE_ARRAY;
@@ -82,24 +106,39 @@ class WPAlchemy_MetaBox
 	var $include_post_id;
 
 	/**
+	 * Callback used on the WordPress "admin_init" action, the main benefit is 
+	 * that the callback is executed only when the meta box is present, this
+	 * option should be used when instantiating the class.
+	 *
+	 * @since	1.3.4
+	 * @access	public
+	 * @var		string|array optional
+	 */
+	var $init_action;
+
+	/**
 	 * Callback used to override when the meta box gets displayed, must return
 	 * true or false to determine if the meta box should or should not be
 	 * displayed, this option should be used when instantiating the class.
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		string|array
+	 * @var		string|array optional
+	 * @param	array $post_id first variable passed to the callback function
 	 * @see		can_output()
 	 */
 	var $output_filter;
 
 	/**
-	 * Callback used to override or insert meta data before saving, this option
-	 * should be used when instantiating the class.
+	 * Callback used to override or insert meta data before saving, you can halt
+	 * saving by passing back FALSE (return FALSE), this option should be used
+	 * when instantiating the class.
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		string|array
+	 * @var		string|array optional
+	 * @param	array $meta meta box data, first variable passed to the callback function
+	 * @param	string $post_id second variable passed to the callback function
 	 * @see		$save_action, add_filter()
 	 */
 	var $save_filter;
@@ -110,7 +149,9 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		string|array
+	 * @var		string|array optional
+	 * @param	array $meta meta box data, first variable passed to the callback function
+	 * @param	string $post_id second variable passed to the callback function
 	 * @see		$save_filter, add_filter()
 	 */
 	var $save_action;
@@ -121,7 +162,8 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		string|array
+	 * @var		string|array optional
+	 * @param	array $content current head content, first variable passed to the callback function
 	 * @see		$head_action, add_filter()
 	 */
 	var $head_filter;
@@ -132,7 +174,7 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		string|array
+	 * @var		string|array optional
 	 * @see		$head_filter, add_action()
 	 */
 	var $head_action;
@@ -143,7 +185,8 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		string|array
+	 * @var		string|array optional
+	 * @param	array $content current foot content, first variable passed to the callback function
 	 * @see		$foot_action, add_filter()
 	 */
 	var $foot_filter;
@@ -154,7 +197,7 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		string|array
+	 * @var		string|array optional
 	 * @see		$foot_filter, add_action()
 	 */
 	var $foot_action;
@@ -165,7 +208,7 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		bool
+	 * @var		bool optional
 	 */
 	var $hide_editor = FALSE;
 
@@ -175,7 +218,7 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.3
 	 * @access	public
-	 * @var		bool
+	 * @var		bool optional
 	 * @see		$title
 	 */
 	var $hide_title = FALSE;
@@ -187,7 +230,7 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since		1.3.3
 	 * @access		public
-	 * @var			string possible values are: top, bottom, before_post_title, after_post_title
+	 * @var			string optional possible values are: top, bottom, before_post_title, after_post_title
 	 */
 	var $lock;
 
@@ -198,7 +241,7 @@ class WPAlchemy_MetaBox
 	 * @deprecated	deprecated since version 1.3.3
 	 * @since		1.3
 	 * @access		public
-	 * @var			bool
+	 * @var			bool optional
 	 * @see			$lock
 	 */
 	var $lock_on_top = FALSE;
@@ -210,7 +253,7 @@ class WPAlchemy_MetaBox
 	 * @deprecated	deprecated since version 1.3.3
 	 * @since		1.3
 	 * @access		public
-	 * @var			bool
+	 * @var			bool optional
 	 * @see			$lock
 	 */
 	var $lock_on_bottom = FALSE;
@@ -222,9 +265,19 @@ class WPAlchemy_MetaBox
 	 *
 	 * @since	1.3.3
 	 * @access	public
-	 * @var		string possible values are: opened, closed, always_opened
+	 * @var		string optional possible values are: opened, closed, always_opened
 	 */
 	var $view;
+
+	/**
+	 * Used to hide the show/hide checkbox option from the screen options area,
+	 * this option should be used when instantiating the class.
+	 *
+	 * @since		1.3.4
+	 * @access		public
+	 * @var			bool optional
+	 */
+	var $hide_screen_option = FALSE;
 
 	// private
 
@@ -301,10 +354,6 @@ class WPAlchemy_MetaBox
 			elseif ($this->lock_on_bottom) $this->lock = WPALCHEMY_LOCK_BOTTOM;
 			
 			add_action('admin_init', array($this,'_init'));
-
-			add_action('admin_head', array($this,'_head'), 11);
-			
-			add_action('admin_footer', array($this,'_foot'), 11);
 		}
 		else 
 		{
@@ -323,9 +372,9 @@ class WPAlchemy_MetaBox
 	{
 		// runs only in post.php and post-new.php (this includes pages also)
 		$uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : NULL ;
-		if ($uri AND !strpos($uri,'post.php') AND !strpos($uri,'post-new.php')) return;
+		if ($uri AND !strpos($uri,'post.php') AND !strpos($uri,'post-new.php') AND !strpos($uri,'page.php') AND !strpos($uri,'page-new.php')) return;
 		
-		if (!empty($this->output_filter))
+		if ( ! empty($this->output_filter))
 		{
 			$this->add_filter('output', $this->output_filter);
 		}
@@ -334,10 +383,10 @@ class WPAlchemy_MetaBox
 		{
 			foreach ($this->types as $type) 
 			{
-				add_meta_box($this->id . '_metabox', $this->title, array($this,'_setup'), $type, $this->context, $this->priority);
+				add_meta_box($this->id . '_metabox', $this->title, array($this, '_setup'), $type, $this->context, $this->priority);
 			}
 
-			add_action('save_post',array($this,'_save'));
+			add_action('save_post', array($this,'_save'));
 
 			$filters = array('save', 'head', 'foot');
 
@@ -347,11 +396,18 @@ class WPAlchemy_MetaBox
 
 				if (!empty($this->$var))
 				{
-					$this->add_filter($filter, $this->$var);
+					if ('save' == $filter)
+					{
+						$this->add_filter($filter, $this->$var, 10, 2);
+					}
+					else
+					{
+						$this->add_filter($filter, $this->$var);
+					}
 				}
 			}
 
-			$actions = array('save', 'head', 'foot');
+			$actions = array('save', 'head', 'foot', 'init');
 
 			foreach ($actions as $action)
 			{
@@ -359,8 +415,25 @@ class WPAlchemy_MetaBox
 
 				if (!empty($this->$var))
 				{
-					$this->add_action($action, $this->$var);
+					if ('save' == $action)
+					{
+						$this->add_action($action, $this->$var, 10, 2);
+					}
+					else
+					{
+						$this->add_action($action, $this->$var);
+					}
 				}
+			}
+
+			add_action('admin_head', array($this,'_head'), 11);
+
+			add_action('admin_footer', array($this,'_foot'), 11);
+
+			// action: init
+			if ($this->has_action('init'))
+			{
+				$this->do_action('init');
 			}
 		}
 	}
@@ -377,33 +450,30 @@ class WPAlchemy_MetaBox
 	{
 		$content = NULL;
 
-		if ($this->can_output())
+		ob_start();
+
+		?>
+		<style type="text/css">
+			<?php if ($this->hide_editor): ?> #postdiv, #postdivrich { display:none; } <?php endif; ?>
+		</style>
+		<?php
+
+		$content = ob_get_contents();
+
+		ob_end_clean();
+
+		// filter: head
+		if ($this->has_filter('head'))
 		{
-			ob_start();
+			$content = $this->apply_filters('head', $content);
+		}
 
-			?>
-			<style type="text/css">
-				<?php if ($this->hide_editor): ?> #postdiv, #postdivrich { display:none; } <?php endif; ?>
-			</style>
-			<?php
+		echo $content;
 
-			$content = ob_get_contents();
-
-			ob_end_clean();
-			
-			// filter: head
-			if ($this->has_filter('head'))
-			{
-				$content = $this->apply_filters('head', $content);
-			}
-
-			echo $content;
-
-			// action: head
-			if ($this->has_action('head'))
-			{
-				$this->do_action('head');
-			}
+		// action: head
+		if ($this->has_action('head'))
+		{
+			$this->do_action('head');
 		}
 	}
 
@@ -419,7 +489,13 @@ class WPAlchemy_MetaBox
 	{
 		$content = NULL;
 
-		if ($this->can_output() AND ($this->lock OR $this->hide_title))
+		if
+		(
+			$this->lock OR
+			$this->hide_title OR
+			$this->view OR
+			$this->hide_screen_option
+		)
 		{
 			ob_start();
 
@@ -428,7 +504,8 @@ class WPAlchemy_MetaBox
 			/* <![CDATA[ */
 			(function($){ /* not using jQuery ondomready, code runs right away in footer */
 
-				var mb = $('#<?php echo $this->id; ?>_metabox');
+				var mb_id = '<?php echo $this->id; ?>';
+				var mb = $('#' + mb_id + '_metabox');
 
 				<?php if (WPALCHEMY_LOCK_TOP == $this->lock): ?>
 				<?php if ('side' == $this->context): ?>
@@ -509,6 +586,10 @@ class WPAlchemy_MetaBox
 				$('.hndle', mb).css('cursor','auto');
 				<?php endif; ?>
 
+				<?php if ($this->hide_screen_option): ?>
+					$('.metabox-prefs label[for='+ mb_id +'_metabox-hide]').remove();
+				<?php endif; ?>
+
 				mb = null;
 
 			})(jQuery);
@@ -519,20 +600,20 @@ class WPAlchemy_MetaBox
 			$content = ob_get_contents();
 
 			ob_end_clean();
-			
-			// filter: foot
-			if ($this->has_filter('foot'))
-			{
-				$content = $this->apply_filters('foot', $content);
-			}
+		}
+		
+		// filter: foot
+		if ($this->has_filter('foot'))
+		{
+			$content = $this->apply_filters('foot', $content);
+		}
 
-			echo $content;
+		echo $content;
 
-			// action: foot
-			if ($this->has_action('foot'))
-			{
-				$this->do_action('foot');
-			}
+		// action: foot
+		if ($this->has_action('foot'))
+		{
+			$this->do_action('foot');
 		}
 	}
 
@@ -618,8 +699,9 @@ class WPAlchemy_MetaBox
 	 */
 	function apply_filters($tag, $value)
 	{
-		$tag = $this->_get_filter_tag($tag);
-		return apply_filters($tag, $value);
+		$args = func_get_args();
+		$args[0] = $this->_get_filter_tag($tag);
+		return call_user_func_array('apply_filters', $args);
 	}
 
 	/**
@@ -700,8 +782,9 @@ class WPAlchemy_MetaBox
 	 */
 	function do_action($tag, $arg = '')
 	{
-		$tag = $this->_get_action_tag($tag);
-		return do_action($tag, $arg);
+		$args = func_get_args();
+		$args[0] = $this->_get_action_tag($tag);
+		return call_user_func_array('do_action', $args);
 	}
 
 	/**
@@ -925,6 +1008,17 @@ class WPAlchemy_MetaBox
 			}
 		}
 
+		// $_GET['post_type'] used with post-new.php and page-new.php
+		$post_type = isset($_GET['post_type']) ? $_GET['post_type'] : NULL ;
+		
+		// get_post_type() works only with existing posts or pages get_post_type($post_id);
+		$post_type = $post_type ? $post_type : get_post_type($post_id) ;
+
+		if (! empty($post_type) AND ! in_array($post_type, $this->types))
+		{
+			$can_output = FALSE;
+		}
+
 		// filter: output (can_output)
 		if ($this->has_filter('output'))
 		{
@@ -945,6 +1039,10 @@ class WPAlchemy_MetaBox
 	 */
 	function _global_head()
 	{
+		// runs only in post.php and post-new.php (this includes pages also)
+		$uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : NULL ;
+		if ($uri AND !strpos($uri,'post.php') AND !strpos($uri,'post-new.php') AND !strpos($uri,'page.php') AND !strpos($uri,'page-new.php')) return;
+
 		// todo: you're assuming people will want to use this exact functionality
 		// consider giving a developer access to change this via hooks/callbacks
 
@@ -1082,9 +1180,16 @@ class WPAlchemy_MetaBox
 	{
 		if ( ! is_numeric($post_id))
 		{
-			global $post;
+			if ($internal AND $this->current_post_id)
+			{
+				$post_id = $this->current_post_id;
+			}
+			else
+			{
+				global $post;
 
-			$post_id = $post->ID;
+				$post_id = $post->ID;
+			}
 		}
 
 		// this allows multiple internal calls to _meta() without having to fetch data everytime
@@ -1628,13 +1733,14 @@ class WPAlchemy_MetaBox
 		 * so in the case that this functionality changes, let it run twice
 		 */
 
-		$real_post_id = $_POST['post_ID'];
+		$real_post_id = isset($_POST['post_ID']) ? $_POST['post_ID'] : NULL ;
 		
 		// check autosave
 		if (defined('DOING_AUTOSAVE') AND DOING_AUTOSAVE AND !$this->autosave) return $post_id;
 	 
 		// make sure data came from our meta box, verify nonce
-		if (!wp_verify_nonce($_POST[$this->id.'_nonce'],$this->id)) return $post_id;
+		$nonce = isset($_POST[$this->id.'_nonce']) ? $_POST[$this->id.'_nonce'] : NULL ;
+		if (!wp_verify_nonce($nonce, $this->id)) return $post_id;
 	 
 		// check user permissions
 		if ($_POST['post_type'] == 'page') 
@@ -1655,7 +1761,13 @@ class WPAlchemy_MetaBox
 		// filter: save
 		if ($this->has_filter('save'))
 		{
-			$new_data = $this->apply_filters('save', $new_data);
+			$new_data = $this->apply_filters('save', $new_data, $real_post_id);
+
+			/**
+			 * halt saving
+			 * @since 1.3.4
+			 */
+			if (FALSE === $new_data) return $post_id;
 		}
 
 		// get current fields, use $real_post_id (used in both modes)
@@ -1728,7 +1840,7 @@ class WPAlchemy_MetaBox
 		// action: save
 		if ($this->has_action('save'))
 		{
-			$this->do_action('save', $new_data);
+			$this->do_action('save', $new_data, $real_post_id);
 		}
 
 		return $post_id;
@@ -1794,15 +1906,12 @@ class WPAlchemy_MetaBox
 	}
 }
 
-/*
-
-Contributors:
-
-	Suso Guez | http://shambanet.com/
-	http://farinspace.com/wpalchemy-metabox/comment-page-1/#comment-3156
-
-	All who have given their feedback and ideas.
-
-*/
+/**
+ * Thanks to all who have given their feedback and ideas, including:
+ *
+ * @contributor		Christian Hochfilzer | power user, code testing, lots of good questions
+ * @contributor		Adam van den Hoven | provided several useful code ideas/contributions
+ * @contributor		Suso Guez | provided fix for field names with dashes, http://farinspace.com/wpalchemy-metabox/comment-page-1/#comment-3156
+ */
 
 /* End of file */
