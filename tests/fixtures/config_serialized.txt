@@ -1,1 +1,0 @@
-a:4:{s:2:"id";s:22:"_custom_meta_view_test";s:5:"title";s:14:"My Custom Meta";s:8:"template";s:117:"C:/bin/apache/projects/dimas/wpalchemy/html/testing/wp-content/themes/twentyten_custom/tests/fixtures/simple_meta.php";s:4:"view";s:6:"closed";}

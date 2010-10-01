@@ -20,5 +20,8 @@
 			<file>DisplayOption_Lock_TestCase.php</file>
 			<file>DisplayOption_View_TestCase.php</file>
 		</testsuite>
+		<testsuite name="WPAlchemy Filters and Actions Tests">
+			<file>Filters_Actions_TestCase.php</file>
+		</testsuite>
 	</testsuites>
 </phpunit>

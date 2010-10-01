@@ -10,6 +10,9 @@ class WPAlchemy_Base_TestCase extends PHPUnit_Extensions_SeleniumTestCase
 
 	public $_path;
 
+	// used to print along with values, to verify functionality
+	public $verification_str = 'd8b32aed3c';
+
 	function setUp()
 	{
 		$this->_path = str_replace('\\','/',dirname(__FILE__));

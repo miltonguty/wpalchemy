@@ -9,4 +9,5 @@ include_once TEMPLATEPATH . '/WPAlchemy/MetaBox.php';
 if (is_admin()) wp_enqueue_style('custom_meta_css', _TEMPLATEURL . '/tests/fixtures/meta.css');
 
 $custom_metabox = new WPAlchemy_MetaBox(unserialize(file_get_contents(TEMPLATEPATH . '/tests/fixtures/config_serialized.txt')));
-//require_once TEMPLATEPATH . '/tests/fixtures/setup.php';
+
+require_once TEMPLATEPATH . '/tests/fixtures/setup.php';
