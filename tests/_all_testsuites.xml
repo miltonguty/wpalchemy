@@ -2,17 +2,18 @@
 	<selenium>
 		<browser 
 			name="FF on Windows 7" 
-			browser="*firefox"/>
+			browser="*firefox"/><!--
 		<browser 
 			name="Chrome on Windows 7" 
 			browser="*googlechrome"/>
 		<browser 
 			name="IE on Windows 7" 
-			browser="*iexploreproxy"/>
+			browser="*iexploreproxy"/>-->
 	</selenium>
 	<testsuites>
 		<testsuite name="WPAlchemy Functional Tests">
 			<file>Functional_TestCase.php</file>
+			<file>Mode_Switching_TestCase.php</file>
 		</testsuite>
 		<testsuite name="WPAlchemy Display Options Tests">
 			<file>DisplayOption_HideEditor_TestCase.php</file>
