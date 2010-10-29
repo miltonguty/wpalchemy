@@ -38,6 +38,7 @@ class WPAlchemy_Functional_TestCase extends WPAlchemy_Base_TestCase
 
 	### is meta box displayed (existing post/page)
 
+	//1
 	function test_regular_login_and_post_type()
 	{
 		$this->_use_regular_login();
@@ -48,7 +49,8 @@ class WPAlchemy_Functional_TestCase extends WPAlchemy_Base_TestCase
 
 		$this->assertTrue($this->_mb_has_content());
 	}
-
+	
+	//2
 	function test_regular_login_and_page_type()
 	{
 		$this->_use_regular_login();
@@ -62,6 +64,7 @@ class WPAlchemy_Functional_TestCase extends WPAlchemy_Base_TestCase
 
 	### is meta box displayed (new post/page)
 
+	//3
 	function test_regular_login_and_post_type_new()
 	{
 		$this->_use_regular_login();
@@ -73,6 +76,7 @@ class WPAlchemy_Functional_TestCase extends WPAlchemy_Base_TestCase
 		$this->assertTrue($this->_mb_has_content());
 	}
 
+	//4
 	function test_regular_login_and_page_type_new()
 	{
 		$this->_use_regular_login();
@@ -84,6 +88,7 @@ class WPAlchemy_Functional_TestCase extends WPAlchemy_Base_TestCase
 		$this->assertTrue($this->_mb_has_content());
 	}
 
+	//5
 	function test_regular_login_and_post_type_and_publish()
 	{
 		$this->_use_regular_login();
@@ -129,6 +134,7 @@ class WPAlchemy_Functional_TestCase extends WPAlchemy_Base_TestCase
 		$this->assertEquals('', $this->getValue($this->_id . '[description]'));
 	}
 
+	//6
 	function test_regular_login_and_page_type_and_publish()
 	{
 		$this->_use_regular_login();
@@ -168,6 +174,93 @@ class WPAlchemy_Functional_TestCase extends WPAlchemy_Base_TestCase
 		// check
 
 		$this->_use_page_type();
+
+		$this->assertEquals('', $this->getValue($this->_id . '[name]'));
+
+		$this->assertEquals('', $this->getValue($this->_id . '[description]'));
+	}
+
+	/**
+	 * This checks for an issue where data would not get saved on a second
+	 * (or future) attempt.
+	 *
+	 * regular login, post type, publishing data twice
+	 */
+	function test_7()
+	{
+		$this->_use_regular_login();
+
+		$this->_use_post_type();
+
+		$this->assertTrue($this->_mb_is_present());
+
+		// save data
+
+		$this->type($this->_id . '[name]', 'test title');
+
+		$this->type($this->_id . '[description]', 'test desc');
+
+		$this->click("publish");
+
+		$this->waitForPageToLoad('30000');
+
+		// check
+
+		$this->_use_post_type();
+
+		$this->assertEquals("test title", $this->getValue($this->_id . '[name]'));
+
+		$this->assertEquals("test desc", $this->getValue($this->_id . '[description]'));
+
+		// cleanup data
+
+		$this->type($this->_id . '[name]', '');
+
+		$this->type($this->_id . '[description]', '');
+
+		$this->click("publish");
+
+		$this->waitForPageToLoad('30000');
+
+		// check
+
+		$this->_use_post_type();
+
+		$this->assertEquals('', $this->getValue($this->_id . '[name]'));
+
+		$this->assertEquals('', $this->getValue($this->_id . '[description]'));
+
+		// save data
+
+		$this->type($this->_id . '[name]', 'test title');
+
+		$this->type($this->_id . '[description]', 'test desc');
+
+		$this->click("publish");
+
+		$this->waitForPageToLoad('30000');
+
+		// check
+
+		$this->_use_post_type();
+
+		$this->assertEquals("test title", $this->getValue($this->_id . '[name]'));
+
+		$this->assertEquals("test desc", $this->getValue($this->_id . '[description]'));
+
+		// cleanup data
+
+		$this->type($this->_id . '[name]', '');
+
+		$this->type($this->_id . '[description]', '');
+
+		$this->click("publish");
+
+		$this->waitForPageToLoad('30000');
+
+		// check
+
+		$this->_use_post_type();
 
 		$this->assertEquals('', $this->getValue($this->_id . '[name]'));
 
