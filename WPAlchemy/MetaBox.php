@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2009, Dimas Begunoff, http://farinspace.com
  * @license		http://en.wikipedia.org/wiki/MIT_License The MIT License
  * @package		WPAlchemy
- * @version		1.3.13
+ * @version		1.3.16
  * @link		http://github.com/farinspace/wpalchemy
  * @link		http://farinspace.com
  */
@@ -27,10 +27,15 @@ define('WPALCHEMY_FIELD_HINT_TEXTAREA', 'textarea');
 
 define('WPALCHEMY_FIELD_HINT_CHECKBOX', 'checkbox');
 
+define('WPALCHEMY_FIELD_HINT_CHECKBOX_MULTI', 'checkbox_multi');
+
 define('WPALCHEMY_FIELD_HINT_RADIO', 'radio');
 
 define('WPALCHEMY_FIELD_HINT_SELECT', 'select');
 
+define('WPALCHEMY_FIELD_HINT_SELECT_MULTI', 'select_multi');
+
+// depreciated, use WPALCHEMY_FIELD_HINT_SELECT_MULTI instead
 define('WPALCHEMY_FIELD_HINT_SELECT_MULTIPLE', 'select_multiple');
 
 define('WPALCHEMY_LOCK_TOP', 'top');
@@ -472,10 +477,28 @@ class WPAlchemy_MetaBox
 			elseif ($this->lock_on_bottom) $this->lock = WPALCHEMY_LOCK_BOTTOM;
 			
 			add_action('admin_init', array($this,'_init'));
+
+			// uses the default wordpress-importer plugin hook
+			add_action('import_post_meta', array($this, '_import'), 10, 3);
 		}
 		else 
 		{
 			die('Associative array parameters required');
+		}
+	}
+
+	/**
+	 * Used to correct double serialized data during post/page export/import
+	 *
+	 * @since	1.3.16
+	 * @access	private
+	 */
+	function _import($post_id, $key, $value)
+	{
+		if (WPALCHEMY_MODE_ARRAY == $this->mode AND $key == $this->id)
+		{
+			// maybe_unserialize fixes a wordpress bug which double serializes already serialized data during export/import
+			update_post_meta($post_id, $key, maybe_unserialize(stripslashes($value)));
 		}
 	}
 
@@ -1285,15 +1308,20 @@ class WPAlchemy_MetaBox
 				
 				var the_clone = the_group.clone().removeClass('tocopy');
 
+				var the_props = ['name', 'id', 'for'];
+
 				the_group.find('input, textarea, select, button, label').each(function(i,elem)
 				{
-					var the_name = $(elem).attr('name');
-
-					if (undefined != the_name)
+					for (var j = 0; j < the_props.length; j++)
 					{
-						var the_match = the_name.match(/\[(\d+)\]/i);
-						the_name = the_name.replace(the_match[0],'['+(+the_match[1]+1)+']');
-						$(elem).attr('name',the_name);
+						var the_prop = $(elem).attr(the_props[j]);
+
+						if (the_prop)
+						{
+							var the_match = the_prop.match(/\[(\d+)\]/i);
+							the_prop = the_prop.replace(the_match[0],'['+(+the_match[1]+1)+']');
+							$(elem).attr(the_props[j], the_prop);
+						}
 					}
 				});
 
@@ -1393,9 +1421,6 @@ class WPAlchemy_MetaBox
 		// WPALCHEMY_MODE_ARRAY
 
 		$meta = get_post_meta($post_id, $this->id, TRUE);
-
-		// wordpress issue: when exporting, then importing, wp will double serialize the postmeta value
-		if ( ! is_array($meta)) $meta = unserialize($meta);
 
 		// WPALCHEMY_MODE_EXTRACT
 
@@ -1562,8 +1587,15 @@ class WPAlchemy_MetaBox
 
 			$the_field = $this->id . '[' . $n . ']';
 		}
+
+		$hints = array
+		(
+			WPALCHEMY_FIELD_HINT_CHECKBOX_MULTI,
+			WPALCHEMY_FIELD_HINT_SELECT_MULTI,
+			WPALCHEMY_FIELD_HINT_SELECT_MULTIPLE,
+		);
 		
-		if (WPALCHEMY_FIELD_HINT_SELECT_MULTIPLE == $this->hint)
+		if (in_array($this->hint, $hints))
 		{
 			$the_field .= '[]';
 		}
@@ -2025,7 +2057,7 @@ class WPAlchemy_MetaBox
 		else
 		{
 			$current_data = get_post_meta($post_id, $this->id, TRUE);
-			
+
 			if (is_array($current_data))
 			{
 				if (is_null($new_data))
@@ -2122,13 +2154,5 @@ class WPAlchemy_MetaBox
 		}
 	}
 }
-
-/**
- * Thanks to all who have given their feedback and ideas, including:
- *
- * @contributor		Christian Hochfilzer | power user, code testing, lots of good questions
- * @contributor		Adam van den Hoven | provided several useful code ideas/contributions
- * @contributor		Suso Guez | provided fix for field names with dashes, http://farinspace.com/wpalchemy-metabox/comment-page-1/#comment-3156
- */
 
 /* End of file */
