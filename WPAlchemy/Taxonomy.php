@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @author		Dimas Begunoff, Robbert LAST_NAME
+ * @author		Dimas Begunoff, Robbert Langezaal
  * @copyright	Copyright (c) 2009, Dimas Begunoff, http://farinspace.com
  * @license		http://en.wikipedia.org/wiki/MIT_License The MIT License
  * @package		WPAlchemy
