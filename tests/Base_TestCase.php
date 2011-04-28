@@ -29,7 +29,7 @@ class WPAlchemy_Base_TestCase extends PHPUnit_Extensions_SeleniumTestCase
 		$p = str_replace('\\','/',dirname(__FILE__));
 		$f = $p . '/fixtures/config_serialized.txt';
 
-		unlink($f);
+		@unlink($f);
 
 		$this->assertFileNotExists($f);
 

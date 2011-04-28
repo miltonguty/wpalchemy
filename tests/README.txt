@@ -13,8 +13,15 @@ directory and running the following from a command line:
 
 java -jar C:\bin\selenium-server-1.0.3\selenium-server.jar
 
-Install PHPUnit: (best to use PEAR to install)
-http://www.phpunit.de/manual/3.5/en/installation.html
+PEAR setup
+
+1. open up a dos prompt (Run as administrator)
+
+2. cd c:\php
+
+3. go-pear (install pear)
+
+4. Install PHPUnit: (best to use PEAR to install) http://www.phpunit.de/manual/3.5/en/installation.html
 
 Install WordPress (locally) 
 http://wordpress.org/
