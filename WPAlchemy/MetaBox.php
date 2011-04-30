@@ -5,7 +5,7 @@
  * @copyright	Copyright (c) 2009, Dimas Begunoff, http://farinspace.com
  * @license		http://en.wikipedia.org/wiki/MIT_License The MIT License
  * @package		WPAlchemy
- * @version		1.4.6
+ * @version		1.4.8
  * @link		http://github.com/farinspace/wpalchemy
  * @link		http://farinspace.com
  */
@@ -1017,11 +1017,13 @@ class WPAlchemy_MetaBox
 	{
 		$uri = isset($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : NULL ;
 
-		$file = basename(parse_url($uri, PHP_URL_PATH));
+		$uri_parts = parse_url($uri);
+
+		$file = basename($uri_parts['path']);
 
 		if ($uri AND in_array($file, array('post.php', 'post-new.php')))
 		{
-			$post_id = isset($_GET['post']) ? $_GET['post'] : NULL ;
+			$post_id = WPAlchemy_MetaBox::_get_post_id();
 
 			$post_type = isset($_GET['post_type']) ? $_GET['post_type'] : NULL ;
 
@@ -1033,6 +1035,7 @@ class WPAlchemy_MetaBox
 			}
 			else
 			{
+				// because of the 'post.php' and 'post-new.php' checks above, we can default to 'post'
 				return 'post';
 			}
 		}
@@ -1041,17 +1044,38 @@ class WPAlchemy_MetaBox
 	}
 
 	/**
+	 * Used to get the current post id.
+	 *
+	 * @static
+	 * @since	1.4.8
+	 * @return	int post ID
+	 */
+	function _get_post_id()
+	{
+		global $post;
+
+		$p_post_id = isset($_POST['post_ID']) ? $_POST['post_ID'] : null ;
+
+		$g_post_id = isset($_GET['post']) ? $_GET['post'] : null ;
+
+		$post_id = $g_post_id ? $g_post_id : $p_post_id ;
+
+		$post_id = isset($post->ID) ? $post->ID : $post_id ;
+
+		if (isset($post_id))
+		{
+			return (integer) $post_id;
+		}
+		
+		return null;
+	}
+
+	/**
 	 * @since	1.0
 	 */
 	function can_output()
 	{
-		global $post;
-		
-		$p_post_id = isset($_POST['post_ID']) ? $_POST['post_ID'] : '' ;
-		$g_post_id = isset($_GET['post']) ? $_GET['post'] : '' ;
-
-		$post_id = $g_post_id ? $g_post_id : $p_post_id ;
-		$post_id = (!empty($post) AND $post->ID) ? $post->ID : $post_id ;
+		$post_id = WPAlchemy_MetaBox::_get_post_id();
 
 		if (!empty($this->exclude_template) OR !empty($this->include_template))
 		{
