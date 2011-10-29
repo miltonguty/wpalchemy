@@ -8,6 +8,7 @@ include_once TEMPLATEPATH . '/WPAlchemy/MetaBox.php';
 // stylesheet used by all similar meta boxes
 if (is_admin()) wp_enqueue_style('custom_meta_css', _TEMPLATEURL . '/tests/fixtures/meta.css');
 
-$custom_metabox = new WPAlchemy_MetaBox(unserialize(file_get_contents(TEMPLATEPATH . '/tests/fixtures/config_serialized.txt')));
+$file = TEMPLATEPATH . '/tests/fixtures/config_serialized.txt';
+if (file_exists($file)) $custom_metabox = new WPAlchemy_MetaBox(unserialize(file_get_contents($file)));
 
 require_once TEMPLATEPATH . '/tests/fixtures/setup.php';
