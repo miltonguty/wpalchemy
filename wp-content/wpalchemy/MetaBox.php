@@ -1412,7 +1412,7 @@ class WPAlchemy_MetaBox
 
 				var the_group = $('.wpa_group-'+ the_name +'.tocopy', p).first();
 
-				var the_clone = the_group.clone().removeClass('tocopy last');
+				var the_clone = the_group.clone(true,true).removeClass('tocopy last');
 
 				var the_props = ['name', 'id', 'for', 'class'];
 
